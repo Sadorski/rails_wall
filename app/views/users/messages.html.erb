@@ -1,0 +1,37 @@
+<div class=header>
+    <p>CodingDojo Wall</p>
+    <p>Welcome <%=@user.username%></p>
+    <a href=/logout>Log Out</a>
+</div>
+<div class="container">
+<% if flash[:notice] %>
+  <% flash[:notice].each do |note| %>
+    <p id="notice"><%= note %></p>  
+  <% end %>
+<% end %>
+    <h1> Post a Message </h1>
+    <form action="/messages" method="POST">
+        <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">
+        <textarea class="form-control" name="content"></textarea>
+        <input class=btn type=submit value="Post a Message">
+    </form>
+    <% @messages.each do |message| %>
+    <div>
+        <h5><%= message.user.username %> - <%= message.created_at.strftime("%b %d, %Y") %></h5>
+        <p><%=message.content%></p>
+        <h3> Comments: </h3>
+        <form action="/create" method="POST">
+            <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">
+            <input type="hidden" name="msg_id" value="<%=message.id%>">
+            <textarea class="form-control" name="content"></textarea>
+            <input class=btn type=submit value="Post a Comment">
+    </form>
+        <% @comments.each do |comment| %>
+        <% if comment.message.id == message.id %>
+        <h5><%= comment.user.username %> - <%= comment.created_at.strftime("%b %d, %Y") %></h5>
+        <p><%= comment.content %></p>
+        <%end%>
+        <%end%>
+    </div>
+    <% end %>
+</div>
